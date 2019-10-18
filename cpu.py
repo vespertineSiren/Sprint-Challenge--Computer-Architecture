@@ -15,6 +15,11 @@ POP = 0b01000110
 PRN = 0b01000111
 # PUSH: Push/pop you know the drill
 PUSH = 0b01000101
+#SPRINT ALU COMMANDS
+CMP = 0b10100111
+JMP = 0b01010100
+JEQ = 0b01010101
+JNE = 0b01010110
 
 class CPU:
     """Main CPU class."""
@@ -31,6 +36,7 @@ class CPU:
         #self.PC = 0
         self.PC = self.reg[0]
 
+        self.FL = self.reg[4]
         self.SP = self.reg[7]
         self.SP = 7
 
@@ -46,10 +52,15 @@ class CPU:
             0b10100010: self.mul,
             0b01000110: self.pop,
             0b01000111: self.prn,
-            0b01000101: self.push
+            0b01000101: self.push,
+            # SPRINT COMMANDS
+            0b10100111: self.cmp_func,
+            0b01010100: self.jmp,
+            0b01010101: self.jeq,
+            0b01010110: self.jne,
         }
 
-
+    def cmp_func(self, operand ):
 
     def ram_read(self, memaddr):
         return self.ram[memaddr]
