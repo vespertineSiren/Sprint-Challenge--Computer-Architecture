@@ -38,7 +38,7 @@ class CPU:
 
         self.FL = self.reg[4]
         self.SP = self.reg[7]
-        self.SP = 7
+        self.SP = 256
 
 
 
@@ -60,8 +60,35 @@ class CPU:
             0b01010110: self.jne,
         }
 
-    def cmp_func(self, operand ):
+    #Compares too values and sets a flag.
+    def cmp_func(self, op_a, op_b):
+        self.alu("CMP", op_a, op_b)
+        return 3, True
 
+    #Sets the program counter to the address stored in a register
+    def jmp(self, op_a, op_b):
+        self.PC = self.reg[op_a]
+        return 0, True
+
+    # Set program counter to addr stored in given reg if equal True
+    # No incrementation is counter jobs
+    def jeq(self, op_a, op_b):
+        if self.FL == 0b00000001:
+            self.PC = self.reg[op_a]
+            return 0, True
+        return 2, True
+
+    # Same as above... but not equal
+    def jne(self, op_a, op_b):
+        if self.FL != 0b00000001:
+            self.PC = self.reg[op_a]
+            return 0, True
+        return 2, True
+
+
+
+    # Memory Address register, stores address what to read
+    # Memory Data Register, holds the values to write or the value just read.
     def ram_read(self, memaddr):
         return self.ram[memaddr]
 
@@ -129,6 +156,13 @@ class CPU:
         elif op == "MUL":
             self.reg[reg_a] = self.reg[reg_a] * self.reg[reg_b]
             return 2
+        elif op == "CMP":
+            if self.reg[reg_a] > self.reg[reg_b]:
+                self.FL = 0b00000010
+            elif self.reg[reg_a] < self.reg[reg_b]:
+                self.FL = 0b00000100
+            elif self.reg[reg_a] == self.reg[reg_b]:
+                self.FL = 0b00000001
         else:
             raise Exception("Unsupported ALU operation")
 
